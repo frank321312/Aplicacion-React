@@ -1,0 +1,29 @@
+Ejecutar la base de datos:
+
+mysql -u "nombre-de-usuario" -p "contraseña"
+
+source archivoSQL.sql
+
+-- Variables de entorno
+
+Crear un archivo ENV en la carpeta server, el nombre de las variables de entorno puede ser el que esta en el servidor o elegir una usted mismo pero debera reemplazar las que estan en el servidor. 
+
+Variable MySQL_CONNECT contendra (hacer toda la variable en una sola linea para evitar errores): 
+
+MySQL_CONNECT: {
+    "host": "su-host",
+    "user": "su-nombre-usuario",
+    "password": "su-contraseña",
+    "database": "nombre-de-base-de-datos"
+}
+
+Variable EMAIL_CONNECT contendra (hacer toda la variable en una sola linea para evitar errores):
+
+EMAIL_CONNECT: {
+    "clientId": "su-client-id",
+    "clientSecret": "su-cliente-secret",
+    "refreshToken": "su-token-refresh",
+    "accessToken": "su-acceso-al-token"
+}
+
+Configurar su cuenta email para poder usar nodemailer, en caso de no hacerlo el servidor le lanzara un error.

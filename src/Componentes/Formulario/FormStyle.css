@@ -1,0 +1,63 @@
+/* Contenedor del formulario */
+
+.form-container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Formulario */
+
+.form-input-container {
+    width: 220px;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    padding: 35px;
+    border: solid 1px #000;
+    border-radius: 10px;
+}
+
+/* Inputs del formulario */
+
+.input__form {
+    height: 16px;
+    padding: 3px;
+    border: none;
+    border-bottom: solid 1px #000;
+}
+
+.btn-submit {
+    height: 28px;
+    background-color: rgb(34, 151, 206);
+    border: none;
+    border-radius: 5px;
+}
+
+/* Titulo del formulario */
+
+.title {
+    text-align: center;
+}
+
+/* Mensaje de error */
+.message-error {
+    color: #a00;
+}
+
+/* Pseudo clases para inputs y button */
+
+.input__form:focus {
+    outline: none;
+    background-color: rgb(234, 239, 243);
+}
+
+.input__form:hover {
+    background-color: rgb(234, 239, 243);
+}
+
+.btn-submit:hover {
+    background-color: rgb(47, 176, 236);
+    cursor: pointer;
+}

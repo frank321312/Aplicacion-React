@@ -1,0 +1,34 @@
+ const [nombre, setNombre] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [correoVerificar, setCorreoVerificar] = useState("");
+    const navigate = useNavigate();
+
+    const add = () => {
+        axios.post("http://localhost:8001/register", {
+            nombre: nombre,
+            email: email,
+            password: password,
+            correoVerificar: correoVerificar
+        }).then((response) => {
+            console.log(response.data);
+            setError(response.data.error);
+            if (!response.data.error) {
+                navigate("/pagina-exito");
+            } 
+        });
+    }
+
+    useEffect(() => {
+        axios.get("http://localhost:8001/usuarioNoValidados").then((response) => {
+            const valor = response.data.results.find(x => x.correoElectronico === email);
+
+            if (valor === undefined) {
+                setCorreoVerificar("");
+            } else {
+                setCorreoVerificar(valor.correoElectronico)
+                console.log(correoVerificar);
+            }
+        });
+    }, [email, correoVerificar]);
