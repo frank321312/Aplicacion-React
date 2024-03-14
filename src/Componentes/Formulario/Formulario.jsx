@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import './FormStyle.css';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ export default function FormRegister() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [bool, setBool] = useState(false);
     const navigate = useNavigate();
 
     const add = () => {
@@ -17,27 +16,16 @@ export default function FormRegister() {
             nombre: nombre,
             email: email,
             password: password,
-            verificar: bool
         }).then((response) => {
             console.log(response.data);
             setError(response.data.error);
             if (!response.data.error) {
-                navigate("/verificar-codigo");
+                const datos = {mensaje: email};
+
+                navigate("/verificar-codigo", {state: { datos }});
             }
         });
     }
-
-    useEffect(() => {
-        axios.get("http://localhost:8001/usuarioNoValidados").then((response) => {
-            const valor = response.data.results.find(x => x.correoElectronico === email);
-            
-            if (valor === undefined) {
-                setBool(false);
-            } else {
-                setBool(true);
-            }
-        })
-    }, [email])
 
     return (
         <DivForm menssgeError={error}>
@@ -70,11 +58,5 @@ export default function FormRegister() {
              />
             <button type='submit' onClick={add} className='btn-submit'>Registrarse</button>
         </DivForm>
-    );
-}
-
-export function ComponenteExito() {
-    return (
-        <h1>Los datos se enviaron correctamente</h1>
     );
 }

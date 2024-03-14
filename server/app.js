@@ -37,81 +37,110 @@ app.get('/ruta', (req, res) => {
     res.json({message: "Hello world"});
 });
 
+// Aqui empieza la validacion de usuario
+
 app.post("/register", (req, res) => {
     const nombre = req.body.nombre;
     const correo = req.body.email;
     const contraseña = req.body.password;
-    const validarCorreo = req.body.verificar;
 
     const queryAltaUsuarioNoValidado = "CALL altaUsuarioNoValidado(?,?,?,?)";
+    const querySelectUsuarioNoValidado = "SELECT * FROM UsuarioNoValidado WHERE correoElectronico = ?";
 
     let codigo = generarNumeroAleatorio();
 
     if (!nombre) {
-        res.json({ error: "Nombre requerido" });
+        return res.json({ error: "Nombre requerido" });
     } else if (nombre.length < 3) {
-        res.json({ error: "El nombre debe tener mas de 5 caracteres" });
+        return res.json({ error: "El nombre debe tener mas de 2 caracteres" });
     } else if (!correo) {
-        res.json({ error: "Correo electronico requerido" });
+        return res.json({ error: "Correo electronico requerido" });
     } else if (correo.indexOf("@gmail.com") === -1) {
         res.json({ error: "El correo debe tener '@gmail.com'" });
     } else if (!contraseña) {
-        res.json({ error: "Constraseña requerido" });
-    } else if (validarCorreo) {
-        res.json({ error: "El correo ya esta en uso" });
-        console.log(validarCorreo);
-    } 
-    else {
-        database.query(queryAltaUsuarioNoValidado, [nombre, correo, contraseña, codigo], (err, results) => {
+        return res.json({ error: "Contraseña requerido" });
+    } else {
+        database.query(querySelectUsuarioNoValidado, [correo], (err, results) => {
             if (err) {
                 console.log(err);
             } else {
-                res.send("Datos enviados correctamente");
-            }
-        });
+                if (results.length > 0) {
+                    return res.json({error: "El correo ya esta en uso"});
+                } else {
+                    database.query(queryAltaUsuarioNoValidado, [nombre, correo, contraseña, codigo], (err, results) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            let trasporter = nodeMailer.createTransport({
+                                service: "gmail",
+                                auth: {
+                                    type: 'OAuth2',
+                                    user: 'hectorsacaca1123@gmail.com',
+                                    clientId: email_connect.clientId,
+                                    clientSecret: email_connect.clientSecret,
+                                    refreshToken: email_connect.refreshToken,
+                                    accessToken: email_connect.accessToken
+                                }
+                            });
+                    
+                            var mailOptions = {
+                                from: "hectorsacaca1123@gmail.com",
+                                to: correo,
+                                subject: "Codigo de verificacion",
+                                text: `${codigo}`
+                            }
+                    
+                            trasporter.sendMail(mailOptions, (error, info) => {
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    console.log("Email enviado:", info.response);
+                                }
+                            });
 
-        let trasporter = nodeMailer.createTransport({
-            service: "gmail",
-            auth: {
-                type: 'OAuth2',
-                user: 'hectorsacaca1123@gmail.com',
-                clientId: email_connect.clientId,
-                clientSecret: email_connect.clientSecret,
-                refreshToken: email_connect.refreshToken,
-                accessToken: email_connect.accessToken
-            }
-        });
-
-        var mailOptions = {
-            from: "hectorsacaca1123@gmail.com",
-            to: correo,
-            subject: "Codigo de verificacion",
-            text: `${codigo}`
-        }
-
-        trasporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log("Email enviado:", info.response);
+                            res.send("Datos enviados correctamente");
+                        }
+                    });
+                }
             }
         });
     }
 });
 
-app.get("/usuarioNoValidados", (req, res) => {
-    const querySelectUsuarioNoValidado = "SELECT * FROM UsuarioNoValidado";
+app.post("/validar-codigo", (req, res) => {
+    const code = req.body.code;
+    const correo = req.body.email;
 
-    database.query(querySelectUsuarioNoValidado, (err, results) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json({results});
-        }
-    });
+    const querySelectoUsuarioNoValidado = "SELECT * FROM UsuarioNoValidado WHERE correoElectronico = ?";
+    const queryAltaUsuario = "CALL altaUsuario(?,?,?,?,?)";
+
+    if (code.length < 1) {
+        return res.json({ error: "Codigo requerido" });
+    } else if (isNaN(Number(code))) {
+        return res.json({ error: "Error, deje el type tal como estaba" });
+    } else {
+        database.query(querySelectoUsuarioNoValidado, [correo], (err, results) => {
+            if (err) {
+                console.log(err);
+            } else {
+                if (Number(code) === results[0].codigo) {
+                    database.query(queryAltaUsuario, [results[0].nombre, results[0].correoElectronico, results[0].contraseña, results[0].idUsuarioNoValidado, results[0].codigo], (err, results) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            res.send("Datos insertados correctamente en la tabla Usuario");
+                        }
+                    });
+                } else {
+                    res.json({ error: "Codigo invalido" });
+                }
+            }
+        });
+    }
 });
+
+// Aqui termina la validacion de usuario
 
 app.listen(port, () => {
     console.log(`Servidor ejecutandose en http://localhost:${port}/`);
 });
-

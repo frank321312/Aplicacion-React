@@ -44,6 +44,7 @@
 /* Mensaje de error */
 .message-error {
     color: #a00;
+    text-align: center;
 }
 
 /* Pseudo clases para inputs y button */
