@@ -71,32 +71,32 @@ app.post("/register", (req, res) => {
                         if (err) {
                             console.log(err);
                         } else {
-                            let trasporter = nodeMailer.createTransport({
-                                service: "gmail",
-                                auth: {
-                                    type: 'OAuth2',
-                                    user: 'hectorsacaca1123@gmail.com',
-                                    clientId: email_connect.clientId,
-                                    clientSecret: email_connect.clientSecret,
-                                    refreshToken: email_connect.refreshToken,
-                                    accessToken: email_connect.accessToken
-                                }
-                            });
+                            // let trasporter = nodeMailer.createTransport({
+                            //     service: "gmail",
+                            //     auth: {
+                            //         type: 'OAuth2',
+                            //         user: 'hectorsacaca1123@gmail.com',
+                            //         clientId: email_connect.clientId,
+                            //         clientSecret: email_connect.clientSecret,
+                            //         refreshToken: email_connect.refreshToken,
+                            //         accessToken: email_connect.accessToken
+                            //     }
+                            // });
                     
-                            var mailOptions = {
-                                from: "hectorsacaca1123@gmail.com",
-                                to: correo,
-                                subject: "Codigo de verificacion",
-                                text: `${codigo}`
-                            }
+                            // var mailOptions = {
+                            //     from: "hectorsacaca1123@gmail.com",
+                            //     to: correo,
+                            //     subject: "Codigo de verificacion",
+                            //     text: `${codigo}`
+                            // }
                     
-                            trasporter.sendMail(mailOptions, (error, info) => {
-                                if (error) {
-                                    console.log(error);
-                                } else {
-                                    console.log("Email enviado:", info.response);
-                                }
-                            });
+                            // trasporter.sendMail(mailOptions, (error, info) => {
+                            //     if (error) {
+                            //         console.log(error);
+                            //     } else {
+                            //         console.log("Email enviado:", info.response);
+                            //     }
+                            // });
 
                             res.send("Datos enviados correctamente");
                         }
