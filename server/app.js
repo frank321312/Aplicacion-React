@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 const cors = require('cors');
-const nodeMailer = require('nodemailer');
+// const nodeMailer = require('nodemailer');
 
 require('dotenv').config({path: './archivo.env'});
 app.use(cors());
@@ -11,7 +11,7 @@ app.use(express.json());
 const port = 8001;
 
 const db_connect = JSON.parse(process.env.MySQL_CONNECT);
-const email_connect = JSON.parse(process.env.EMAIL_CONNECT);
+// const email_connect = JSON.parse(process.env.EMAIL_CONNECT);
 
 var database = mysql.createConnection({
     host: db_connect.host,
